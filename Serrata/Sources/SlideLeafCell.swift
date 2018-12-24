@@ -77,9 +77,12 @@ public final class SlideLeafCell: UICollectionViewCell {
         } else if let asset = slideLeaf.asset {
             let manager = PHImageManager.default()
             let size: CGSize = PHImageManagerMaximumSize
+            let options = PHImageRequestOptions()
+            options.isNetworkAccessAllowed = true
+            options.isSynchronous = true
             manager.requestImage(
                 for: asset, targetSize: size,
-                contentMode: .aspectFill, options: nil) { [weak self] image, _ in
+                contentMode: .aspectFill, options: options) { [weak self] image, _ in
                     guard let weak = self else { return }
                     weak.imageView.image = image
             }

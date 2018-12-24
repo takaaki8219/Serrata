@@ -8,6 +8,7 @@
 
 import UIKit
 import Kingfisher
+import Photos
 
 public protocol SlideLeafCellDelegate: class {
     func slideLeafScrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?)
@@ -72,6 +73,15 @@ public final class SlideLeafCell: UICollectionViewCell {
                 me.activityIndicatorView.isHidden = true
                 me.activityIndicatorView.stopAnimating()
                 me.setImage(image)
+            }
+        } else if let asset = slideLeaf.asset {
+            let manager = PHImageManager.default()
+            let size: CGSize = PHImageManagerMaximumSize
+            manager.requestImage(
+                for: asset, targetSize: size,
+                contentMode: .aspectFill, options: nil) { [weak self] image, _ in
+                    guard let weak = self else { return }
+                    weak.imageView.image = image
             }
         }
     }

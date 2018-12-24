@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import Photos
 
 public final class SlideLeaf: NSObject {
 
     public var image: UIImage?
     public var imageUrlString: String?
+    public var asset: PHAsset?
 
     public var title: String
     public var caption: String
@@ -37,6 +39,18 @@ public final class SlideLeaf: NSObject {
     ///   - caption: Caption of the image.
     public init(imageUrlString: String?, title: String = "", caption: String = "") {
         self.imageUrlString = imageUrlString
+        self.title = title
+        self.caption = caption
+    }
+    
+    /// If either title and caption is empty, detailView is not displayed.
+    ///
+    /// - Parameters:
+    ///   - asset: To read by a slide.
+    ///   - title: Title of the image.
+    ///   - caption: Caption of the image.
+    public init(asset: PHAsset?, title: String = "", caption: String = "") {
+        self.asset = asset
         self.title = title
         self.caption = caption
     }

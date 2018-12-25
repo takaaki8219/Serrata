@@ -83,8 +83,8 @@ public final class SlideLeafCell: UICollectionViewCell {
             manager.requestImage(
                 for: asset, targetSize: size,
                 contentMode: .aspectFill, options: options) { [weak self] image, _ in
-                    guard let weak = self else { return }
-                    weak.imageView.image = image
+                    guard let weak = self, let image = image else { return }
+                    weak.setImage(image)
             }
         }
     }

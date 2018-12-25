@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 
 final class ViewController: UIViewController {
 
@@ -26,15 +27,34 @@ final class ViewController: UIViewController {
         }
     }
 
-    private var images = [UIImage]()
+//    private var images = [UIImage]()
+    private var assets: [PHAsset] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.title = "Images"
 
-        for i in 0...29 {
-            images.append(UIImage(named: "image\(i).jpg") ?? UIImage())
+//        for i in 0...29 {
+//            images.append(UIImage(named: "image\(i).jpg") ?? UIImage())
+//        }
+        if PHPhotoLibrary.authorizationStatus() != .authorized {
+            PHPhotoLibrary.requestAuthorization { [weak self] status in
+                guard let weak = self else { return }
+                if status == .authorized {
+                    weak.fetchAssets()
+                }
+            }
+        } else {
+            fetchAssets()
+        }
+    }
+
+    private func fetchAssets() {
+        let assets: PHFetchResult = PHAsset.fetchAssets(with: .image, options: nil)
+        assets.enumerateObjects { [weak self] asset, _, _ in
+            guard let weak = self else { return }
+            weak.assets.append(asset)
         }
     }
 
@@ -51,7 +71,10 @@ extension ViewController: UICollectionViewDelegate {
             return
         }
 
-        let slideLeafs: [SlideLeaf] = images.enumerated().map { SlideLeaf(image: $0.1,
+//        let slideLeafs: [SlideLeaf] = images.enumerated().map { SlideLeaf(asset: $0.1,
+//                                                                          title: "Image Title \($0.0)",
+//                                                                          caption: "Index is \($0.0)") }
+        let slideLeafs: [SlideLeaf] = assets.enumerated().map { SlideLeaf(asset: $0.1,
                                                                           title: "Image Title \($0.0)",
                                                                           caption: "Index is \($0.0)") }
 
@@ -92,12 +115,14 @@ extension ViewController: SlideLeafViewControllerDelegate {
 extension ViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+//        return images.count
+        return assets.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCell", for: indexPath) as! ImageCell
-        cell.configure(image: images[indexPath.row])
+//        cell.configure(image: images[indexPath.row])
+        cell.configure(asset: assets[indexPath.row])
         return cell
     }
 }

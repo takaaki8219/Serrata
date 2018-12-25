@@ -75,15 +75,19 @@ public final class SlideLeafCell: UICollectionViewCell {
                 me.setImage(image)
             }
         } else if let asset = slideLeaf.asset {
+            activityIndicatorView.startAnimating()
+            activityIndicatorView.isHidden = false
+
             let manager = PHImageManager.default()
             let size: CGSize = PHImageManagerMaximumSize
             let options = PHImageRequestOptions()
             options.isNetworkAccessAllowed = true
-            options.isSynchronous = true
             manager.requestImage(
                 for: asset, targetSize: size,
                 contentMode: .aspectFill, options: options) { [weak self] image, _ in
                     guard let weak = self, let image = image else { return }
+                    weak.activityIndicatorView.isHidden = true
+                    weak.activityIndicatorView.stopAnimating()
                     weak.setImage(image)
             }
         }
